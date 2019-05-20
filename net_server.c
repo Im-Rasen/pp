@@ -108,14 +108,14 @@ int main(){
 
     char b;
     char buff[7];
-    char bye[5]="Bye!\0";
+    char bye[6]="Bye!\n\0";
     char hello[4] = "Hi!\n";
-    char writename[18] = "What's your name?\n";
-    char badwrite[51] = "Too.. too many clients for me to handle, senpai..\n\0";
-    char Dobrop[32] = "& Welcome to the server-party!\n\0";
-    char New[23]="(^.^)/ Newfag is here!\0";
-    char Old[29]="(~.~) zzz Gnight. have to go\0";
-    char nameis[42] = "That is NOT your name! (please change it)\n";
+    char writename[20] = "& What's your name?\n";
+    char badwrite[52] = " Too.. too many clients for me to handle, senpai..\n\0";
+    char Welcome[32] = "& Welcome to the server-party!\n\0";
+    char New[25]=" (^.^)/ Newfag is here!\n\0";
+    char Old[31]=" (~.~) zzz Gnight. have to go\n\0";
+    char nameis[43] = " That is NOT your name! (please change it)\n";
     char Doubledots[3]=": \0";
 
     struct usr_info our_arr[N];
@@ -274,7 +274,7 @@ int main(){
                             write(our_arr[j].desk, writename, 28);
                         } else {
                             if (name_is_name(our_arr,n_clients,j) == GOOD_NAME) {
-                                write(our_arr[j].desk, Dobrop, 50);
+                                write(our_arr[j].desk, Welcome, 50);
 // tell everyone: new user is here
                                 for (int i = 0; i < n_clients; i++) {
                                     if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
