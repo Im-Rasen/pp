@@ -108,7 +108,7 @@ int main(){
 
     char b;
     char buff[7];
-    char bye[6]="Bye!\n";
+    char bye[6]="Bye!";
     char hello[4] = "Hi!\n";
     char writename[20] = "& What's your name?\n";
     char badwrite[52] = "Too.. too many clients for me to handle, senpai..\n\0";
