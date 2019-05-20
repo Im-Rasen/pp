@@ -13,7 +13,7 @@ const int N = 5;
 const int GOOD_NAME = 1;
 const int BAD_NAME = 0;
 const int MAX_LEN_OF_NAME = 16;
-const int htns = 5556;
+const int htns = 4444;
 const int TIMEOUT=5;
 
 struct usr_info{
