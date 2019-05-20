@@ -111,11 +111,11 @@ int main(){
     char bye[6]="Bye!\n\0";
     char hello[4] = "Hi!\n";
     char writename[20] = "& What's your name?\n";
-    char badwrite[52] = " Too.. too many clients for me to handle, senpai..\n\0";
+    char badwrite[52] = "Too.. too many clients for me to handle, senpai..\n\0";
     char Welcome[32] = "& Welcome to the server-party!\n\0";
-    char New[25]=" (^.^)/ Newfag is here!\n\0";
-    char Old[31]=" (~.~) zzz Gnight. have to go\n\0";
-    char name_is[43] = " That is NOT your name! (please change it)\n";
+    char New[25]="(^.^)/ Newfag is here! \0";
+    char Old[31]="(~.~) zzz Gnight. have to go\n\0";
+    char name_is[43] = "That is NOT your name! (please change it)\n";
     char Doubledots[3]=": \0";
 
     struct usr_info our_arr[N];
