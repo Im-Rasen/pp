@@ -10,42 +10,42 @@
 #include <malloc.h>
 
 const int N = 5;
-const int GOODNAME = 1;
-const int BADNAME = 0;
-const int MAXLENOFNAME = 16;
+const int GOOD_NAME = 1;
+const int BAD_NAME = 0;
+const int MAX_LEN_OF_NAME = 16;
 const int htns = 5556;
 const int TIMEOUT=5;
 
 struct usr_info{
     char name[16];
     int desk;
-    int ifnameisgood;
+    int if_name_is_good;
 };
 
-void printchartoallexcept(char* info,int fd,int nclients, struct usr_info ourarr[N]) {
-    for (int i = 0; i < nclients; i++) {
-        if ((fd != ourarr[i].desk) && (ourarr[i].ifnameisgood == GOODNAME)) {
-            write(ourarr[i].desk, info, 1);
+void print_char_to_all_except(char* info,int fd,int n_clients, struct usr_info our_arr[N]) {
+    for (int i = 0; i < n_clients; i++) {
+        if ((fd != our_arr[i].desk) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
+            write(our_arr[i].desk, info, 1);
         }
     }
     printf("%c", *info);
 }
 
-void delusr(struct usr_info ourarr[N], int j,int nclients){
+void delete_usr(struct usr_info our_arr[N], int j,int n_clients){
     int i = j;
-    for (;i<nclients-1;i++){
-        for(int k = 0;k< MAXLENOFNAME;k++){
-            ourarr[i].name[k]=ourarr[i+1].name[k];
+    for (;i<n_clients-1;i++){
+        for(int k = 0;k< MAX_LEN_OF_NAME;k++){
+            our_arr[i].name[k]=our_arr[i+1].name[k];
         }
-        ourarr[i].desk = ourarr[i+1].desk;
-        ourarr[i].ifnameisgood = ourarr[i+1].ifnameisgood;
+        our_arr[i].desk = our_arr[i+1].desk;
+        our_arr[i].if_name_is_good = our_arr[i+1].if_name_is_good;
     }
-    ourarr[nclients-1].ifnameisgood = BADNAME;
+    our_arr[n_clients-1].if_name_is_good = BAD_NAME;
 }
 
-int lenofname(const char name[MAXLENOFNAME]){
+int len_of_name(const char name[MAX_LEN_OF_NAME]){
     int i;
-    for(i=0; i < MAXLENOFNAME; i++){
+    for(i=0; i < MAX_LEN_OF_NAME; i++){
         if (name[i] == 0){
             break;
         }
@@ -53,8 +53,8 @@ int lenofname(const char name[MAXLENOFNAME]){
     return i+1;
 }
 
-int readname(char NAME[MAXLENOFNAME], int fd){
-//читает имя из файлового дескриптора, причем, если клиент ушел возвращает -1, если имя слишком большое затирает остаток, возвращает имя без \n => имя плохое
+int read_name(char NAME[MAX_LEN_OF_NAME], int fd){
+// reads a name from the file descriptor. if client is absent returns -1, if the name is too big, erases the rest, returns name without \n => bad name
     int i = 0;
     char b = 0;
     while(b!='\n'){
@@ -63,7 +63,7 @@ int readname(char NAME[MAXLENOFNAME], int fd){
         }
         NAME[i]=b;
         i++;
-        if ((i == MAXLENOFNAME)&&(b != '\n')){
+        if ((i == MAX_LEN_OF_NAME)&&(b != '\n')){
             while(b!='\n'){
                 read(fd,&b,sizeof(char));
             }
@@ -72,12 +72,11 @@ int readname(char NAME[MAXLENOFNAME], int fd){
     return i;
 }
 
-int nameisgood(char NAME[MAXLENOFNAME]){
-//проверка имени на годность, убивает \n
+int name_is_good(char NAME[MAX_LEN_OF_NAME]){
     int i = 0;
-    for(i = 0; i < MAXLENOFNAME; i++){
+    for(i = 0; i < MAX_LEN_OF_NAME; i++){
         if (((NAME[i] < 'a') | (NAME[i] > 'z')) && ((NAME[i] < 'A') | (NAME[i] > 'Z')) && (NAME[i] != '_') && (NAME[i] != '\n') && (NAME[i] != 13)) {
-            return BADNAME;
+            return BAD_NAME;
         }
         if (NAME[i] == '\r') {
             NAME[i] = 0;
@@ -89,44 +88,44 @@ int nameisgood(char NAME[MAXLENOFNAME]){
             break;
         }
     }
-    if ((i >= 2)&&(i < MAXLENOFNAME)){
-        return GOODNAME;
+    if ((i >= 2)&&(i < MAX_LEN_OF_NAME)){
+        return GOOD_NAME;
     }else{
-        return BADNAME;
+        return BAD_NAME;
     }
 }
 
-int nameisname(struct usr_info ourarr[N],int nclients,int number){
-    for(int i = 0; i < nclients; i++){
-        if ((strcmp(ourarr[i].name,ourarr[number].name)==0)&&(number!=i)){
-            return BADNAME;
+int name_is_name(struct usr_info our_arr[N],int n_clients,int number){
+    for(int i = 0; i < n_clients; i++){
+        if ((strcmp(our_arr[i].name,our_arr[number].name)==0)&&(number!=i)){
+            return BAD_NAME;
         }
     }
-    return GOODNAME;
+    return GOOD_NAME;
 }
 
 int main(){
 
     char b;
     char buff[7];
-    char bye[6]="bye!.\0";
-    char privet[11] = "Даров\n";
-    char writename[28] = "Как тебя звать?\n";
-    char badwrite[89] = "Простите, многовато клиентов, всех не обслужить\n\0";
-    char Dobrop[51] = "Добро пожаловать на сервер\n\0";
-    char New[59]="#Пришел новенький, знакомьтесь: \0";
-    char Old[92]=" не выдержал давления с вашей стороны и решил уйти\0";
-    char nameis[36] = "Прости, имя занято!!\n";
+    char bye[5]="Bye!\0";
+    char hello[4] = "Hi!\n";
+    char writename[18] = "What's your name?\n";
+    char badwrite[51] = "Too.. too many clients for me to handle, senpai..\n\0";
+    char Dobrop[32] = "& Welcome to the server-party!\n\0";
+    char New[23]="(^.^)/ Newfag is here!\0";
+    char Old[29]="(~.~) zzz Gnight. have to go\0";
+    char nameis[42] = "That is NOT your name! (please change it)\n";
     char Doubledots[3]=": \0";
 
-    struct usr_info ourarr[N];
+    struct usr_info our_arr[N];
     struct timeval timeout;
     timeout.tv_sec = TIMEOUT;
     timeout.tv_usec = 0;
     for(int i = 0;i<N;i++){
-        ourarr[i].ifnameisgood = BADNAME;
+        our_arr[i].if_name_is_good = BAD_NAME;
     }
-    int nclients = 0;
+    int n_clients = 0;
     fd_set fds;
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == -1){
@@ -151,27 +150,27 @@ int main(){
     FD_SET(sockfd, &fds);
     while(1) {
         while (select(maxsockfd + 1, &fds, 0, 0, &timeout) == 0) {
-            printf("%s%d\n","#Все ок, количество подключенных: \0",nclients);
+            printf("%s%d\n","& Everything is OK. Connected clients = \0",n_clients);
             timeout.tv_sec = TIMEOUT;
             timeout.tv_usec = 0;
             FD_ZERO(&fds);
             FD_SET(sockfd,&fds);
-            for(int i=0;i < nclients;i++){
-                FD_SET(ourarr[i].desk,&fds);
+            for(int i=0;i < n_clients;i++){
+                FD_SET(our_arr[i].desk,&fds);
             }
         }
         if FD_ISSET(sockfd, &fds){
-            if (nclients < N){
-                ourarr[nclients].desk = accept(sockfd, NULL, NULL);
-                if (ourarr[nclients].desk == -1) {
+            if (n_clients < N){
+                our_arr[n_clients].desk = accept(sockfd, NULL, NULL);
+                if (our_arr[n_clients].desk == -1) {
                     perror("accept error");
                 }
-                if (ourarr[nclients].desk > maxsockfd) {
-                    maxsockfd = ourarr[nclients].desk;
+                if (our_arr[n_clients].desk > maxsockfd) {
+                    maxsockfd = our_arr[n_clients].desk;
                 }
-                write(ourarr[nclients].desk,privet,11);
-                write(ourarr[nclients].desk,writename,28);
-                nclients+=1;
+                write(our_arr[n_clients].desk,hello,11);
+                write(our_arr[n_clients].desk,writename,28);
+                n_clients+=1;
             }else{
                 badsockfd = accept(sockfd,NULL,NULL);
                 write(badsockfd,badwrite,90);
@@ -179,115 +178,115 @@ int main(){
                 close(badsockfd);
             }
         }
-        for (int j = 0; j < nclients; j++) {
-            if FD_ISSET(ourarr[j].desk, &fds) {
-                if (ourarr[j].ifnameisgood == GOODNAME) {
-                    if (read(ourarr[j].desk, &b, 1) == 0) {
-//рассылка про то что челик сбежал
-                        for (int i = 0; i < nclients; i++) {
-                            if ((i != j) && (ourarr[i].ifnameisgood = GOODNAME)) {
-                                write(ourarr[i].desk, ourarr[j].name, lenofname(ourarr[j].name));
-                                write(ourarr[i].desk, Old, 91);
-                                write(ourarr[i].desk, privet + 10, 1);//тупо \n
+        for (int j = 0; j < n_clients; j++) {
+            if FD_ISSET(our_arr[j].desk, &fds) {
+                if (our_arr[j].if_name_is_good == GOOD_NAME) {
+                    if (read(our_arr[j].desk, &b, 1) == 0) {
+// message about the client exit
+                        for (int i = 0; i < n_clients; i++) {
+                            if ((i != j) && (our_arr[i].if_name_is_good = GOOD_NAME)) {
+                                write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
+                                write(our_arr[i].desk, Old, 91);
+                                write(our_arr[i].desk, hello + 10, 1);//\n
                             }
                         }
-                        printf("%s%s\n", ourarr[j].name, Old);
-//полное удаление пользователя j
-                        shutdown(ourarr[j].desk, 2);
-                        close(ourarr[j].desk);
-                        delusr(ourarr, j, nclients);
-                        nclients -= 1;
+                        printf("%s%s\n", our_arr[j].name, Old);
+// delete user j
+                        shutdown(our_arr[j].desk, 2);
+                        close(our_arr[j].desk);
+                        delete_usr(our_arr, j, n_clients);
+                        n_clients -= 1;
                         j--;
                     }else {
                         if (b != '\r') {
                             if (b != '\n') {
                                 for (int i = 0; i < 6; i++) {
                                     buff[i] = b;
-                                    read(ourarr[j].desk, &b, 1);
+                                    read(our_arr[j].desk, &b, 1);
                                     if ((b == '\r') && (i + 1 < 6)) {
                                         buff[i + 1] = 0;
                                         break;
                                     }
                                 }
                                 if (strcmp(buff, bye) == 0) {
-//рассылка про побег челика
-                                    for (int i = 0; i < nclients; i++) {
-                                        if ((i != j) && (ourarr[i].ifnameisgood == GOODNAME)) {
-                                            write(ourarr[i].desk, ourarr[j].name, lenofname(ourarr[j].name));
-                                            write(ourarr[i].desk, Old, 91);
-                                            write(ourarr[i].desk, privet + 10, 1);//тупо \n
+// message about the client exit
+                                    for (int i = 0; i < n_clients; i++) {
+                                        if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
+                                            write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
+                                            write(our_arr[i].desk, Old, 91);
+                                            write(our_arr[i].desk, hello + 10, 1);//\n
                                         }
                                     }
-                                    printf("%s%s\n", ourarr[j].name, Old);
-//удаление убогого
-                                    shutdown(ourarr[j].desk, 2);
-                                    close(ourarr[j].desk);
-                                    delusr(ourarr, j, nclients);
-                                    nclients -= 1;
+                                    printf("%s%s\n", our_arr[j].name, Old);
+// delete him!
+                                    shutdown(our_arr[j].desk, 2);
+                                    close(our_arr[j].desk);
+                                    delete_usr(our_arr, j, n_clients);
+                                    n_clients -= 1;
                                     j--;
                                 } else {
-                                    printf("%s: ", ourarr[j].name);
-                                    for (int i = 0; i < nclients; i++) {
-                                        if ((i != j) && (ourarr[i].ifnameisgood == GOODNAME)) {
-                                            write(ourarr[i].desk, ourarr[j].name, lenofname(ourarr[j].name));
-                                            write(ourarr[i].desk, Doubledots, 2);
+                                    printf("%s: ", our_arr[j].name);
+                                    for (int i = 0; i < n_clients; i++) {
+                                        if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
+                                            write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
+                                            write(our_arr[i].desk, Doubledots, 2);
                                         }
                                     }
                                     buff[6] = 0;
                                     int i = 0;
                                     while (buff[i] != 0) {
-                                        printchartoallexcept(&buff[i], ourarr[j].desk, nclients, ourarr);
+                                        print_char_to_all_except(&buff[i], our_arr[j].desk, n_clients, our_arr);
                                         i++;
                                     }
                                     while (b != '\n') {
                                         if (b != '\r') {
-                                            printchartoallexcept(&b, ourarr[j].desk, nclients, ourarr);
+                                            print_char_to_all_except(&b, our_arr[j].desk, n_clients, our_arr);
                                         }
-                                        read(ourarr[j].desk, &b, 1);
+                                        read(our_arr[j].desk, &b, 1);
                                     }
-                                    printchartoallexcept(&b, ourarr[j].desk, nclients, ourarr);
+                                    print_char_to_all_except(&b, our_arr[j].desk, n_clients, our_arr);
                                 }
                             }
                         }
                     }
                 } else {
-                    if (readname(ourarr[j].name, ourarr[j].desk) == -1) {
-//рассылка про то что челик сбежал
-                        if (ourarr[j].ifnameisgood == GOODNAME) {
-                            for (int i = 0; i < nclients; i++) {
-                                if ((i != j) && (ourarr[i].ifnameisgood == GOODNAME)) {
-                                    write(ourarr[i].desk, ourarr[j].name, lenofname(ourarr[j].name));
-                                    write(ourarr[i].desk, Old, 91);
-                                    write(ourarr[i].desk, privet + 10, 1);//тупо \n
+                    if (read_name(our_arr[j].name, our_arr[j].desk) == -1) {
+// message about the client exit
+                        if (our_arr[j].if_name_is_good == GOOD_NAME) {
+                            for (int i = 0; i < n_clients; i++) {
+                                if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
+                                    write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
+                                    write(our_arr[i].desk, Old, 91);
+                                    write(our_arr[i].desk, hello + 10, 1);//\n
                                 }
                             }
-                            printf("%s%s\n", ourarr[j].name, Old);
+                            printf("%s%s\n", our_arr[j].name, Old);
                         }
-//полное удаление клиента j
-                        shutdown(ourarr[j].desk, 2);
-                        close(ourarr[j].desk);
-                        delusr(ourarr, j, nclients);
-                        nclients -= 1;
+// delete user j
+                        shutdown(our_arr[j].desk, 2);
+                        close(our_arr[j].desk);
+                        delete_usr(our_arr, j, n_clients);
+                        n_clients -= 1;
                         j--;
                     } else {
-                        ourarr[j].ifnameisgood = nameisgood(ourarr[j].name);
-                        if (ourarr[j].ifnameisgood == BADNAME) {
-                            write(ourarr[j].desk, writename, 28);
+                        our_arr[j].if_name_is_good = name_is_good(our_arr[j].name);
+                        if (our_arr[j].if_name_is_good == BAD_NAME) {
+                            write(our_arr[j].desk, writename, 28);
                         } else {
-                            if (nameisname(ourarr,nclients,j) == GOODNAME) {
-                                write(ourarr[j].desk, Dobrop, 50);
-//разослать всем, что пришел новенький
-                                for (int i = 0; i < nclients; i++) {
-                                    if ((i != j) && (ourarr[i].ifnameisgood == GOODNAME)) {
-                                        write(ourarr[i].desk, New, 58);
-                                        write(ourarr[i].desk, ourarr[j].name, lenofname(ourarr[j].name));
-                                        write(ourarr[i].desk, privet + 10, 1);//тупо \n
+                            if (name_is_name(our_arr,n_clients,j) == GOOD_NAME) {
+                                write(our_arr[j].desk, Dobrop, 50);
+// tell everyone: new user is here
+                                for (int i = 0; i < n_clients; i++) {
+                                    if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
+                                        write(our_arr[i].desk, New, 58);
+                                        write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
+                                        write(our_arr[i].desk, hello + 10, 1);//\n
                                     }
                                 }
-                                printf("%s%s\n", New, ourarr[j].name);
+                                printf("%s%s\n", New, our_arr[j].name);
                             }else{
-                                ourarr[j].ifnameisgood = BADNAME;
-                                write(ourarr[j].desk,nameis,36);
+                                our_arr[j].if_name_is_good = BAD_NAME;
+                                write(our_arr[j].desk,nameis,36);
                             }
                         }
                     }
@@ -298,8 +297,8 @@ int main(){
         timeout.tv_usec = 0;
         FD_ZERO(&fds);
         FD_SET(sockfd,&fds);
-        for(int i=0;i < nclients;i++){
-            FD_SET(ourarr[i].desk,&fds);
+        for(int i=0;i < n_clients;i++){
+            FD_SET(our_arr[i].desk,&fds);
         }
     }
     return 0;
