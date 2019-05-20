@@ -115,7 +115,7 @@ int main(){
     char Welcome[32] = "& Welcome to the server-party!\n\0";
     char New[25]=" (^.^)/ Newfag is here!\n\0";
     char Old[31]=" (~.~) zzz Gnight. have to go\n\0";
-    char nameis[43] = " That is NOT your name! (please change it)\n";
+    char name_is[43] = " That is NOT your name! (please change it)\n";
     char Doubledots[3]=": \0";
 
     struct usr_info our_arr[N];
@@ -168,12 +168,12 @@ int main(){
                 if (our_arr[n_clients].desk > maxsockfd) {
                     maxsockfd = our_arr[n_clients].desk;
                 }
-                write(our_arr[n_clients].desk,hello,11);
-                write(our_arr[n_clients].desk,writename,28);
+                write(our_arr[n_clients].desk,hello,4);
+                write(our_arr[n_clients].desk,writename,20);
                 n_clients+=1;
             }else{
                 badsockfd = accept(sockfd,NULL,NULL);
-                write(badsockfd,badwrite,90);
+                write(badsockfd,badwrite,52);
                 shutdown(badsockfd,2);
                 close(badsockfd);
             }
@@ -186,7 +186,7 @@ int main(){
                         for (int i = 0; i < n_clients; i++) {
                             if ((i != j) && (our_arr[i].if_name_is_good = GOOD_NAME)) {
                                 write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
-                                write(our_arr[i].desk, Old, 91);
+                                write(our_arr[i].desk, Old, 31);
                                 write(our_arr[i].desk, hello + 10, 1);//\n
                             }
                         }
@@ -213,7 +213,7 @@ int main(){
                                     for (int i = 0; i < n_clients; i++) {
                                         if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
                                             write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
-                                            write(our_arr[i].desk, Old, 91);
+                                            write(our_arr[i].desk, Old, 31);
                                             write(our_arr[i].desk, hello + 10, 1);//\n
                                         }
                                     }
@@ -229,7 +229,7 @@ int main(){
                                     for (int i = 0; i < n_clients; i++) {
                                         if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
                                             write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
-                                            write(our_arr[i].desk, Doubledots, 2);
+                                            write(our_arr[i].desk, Doubledots, 3);
                                         }
                                     }
                                     buff[6] = 0;
@@ -256,7 +256,7 @@ int main(){
                             for (int i = 0; i < n_clients; i++) {
                                 if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
                                     write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
-                                    write(our_arr[i].desk, Old, 91);
+                                    write(our_arr[i].desk, Old, 31);
                                     write(our_arr[i].desk, hello + 10, 1);//\n
                                 }
                             }
@@ -271,14 +271,14 @@ int main(){
                     } else {
                         our_arr[j].if_name_is_good = name_is_good(our_arr[j].name);
                         if (our_arr[j].if_name_is_good == BAD_NAME) {
-                            write(our_arr[j].desk, writename, 28);
+                            write(our_arr[j].desk, writename, 20);
                         } else {
                             if (name_is_name(our_arr,n_clients,j) == GOOD_NAME) {
-                                write(our_arr[j].desk, Welcome, 50);
+                                write(our_arr[j].desk, Welcome, 32);
 // tell everyone: new user is here
                                 for (int i = 0; i < n_clients; i++) {
                                     if ((i != j) && (our_arr[i].if_name_is_good == GOOD_NAME)) {
-                                        write(our_arr[i].desk, New, 58);
+                                        write(our_arr[i].desk, New, 25);
                                         write(our_arr[i].desk, our_arr[j].name, len_of_name(our_arr[j].name));
                                         write(our_arr[i].desk, hello + 10, 1);//\n
                                     }
@@ -286,7 +286,7 @@ int main(){
                                 printf("%s%s\n", New, our_arr[j].name);
                             }else{
                                 our_arr[j].if_name_is_good = BAD_NAME;
-                                write(our_arr[j].desk,nameis,36);
+                                write(our_arr[j].desk,name_is,43);
                             }
                         }
                     }
